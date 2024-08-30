@@ -64,7 +64,7 @@ router.patch(
 );
 
 router.get(
-  "/:id/list",
+  "/:customer_code/list",
   query("measure_type").optional().isIn(["WATER", "GAS"]),
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -74,8 +74,11 @@ router.get(
         error_description: "Tipo de medição não permitida",
       });
     }
-    const list = await billCtrl.getMeasure(req.params.id);
+    const { customer_code } = req.params;
+    const { measure_type } = req.query;
 
-    res.send({ customer_code: req.params.id, measures: list }).end();
+    const list = await billCtrl.getMeasure(customer_code, measure_type);
+
+    res.send({ customer_code: customer_code, measures: list }).end();
   }
 );

@@ -58,9 +58,10 @@ export class BillController {
     }
   }
 
-  async getMeasure(customer_code: string, measure_type?: string) {
+  async getMeasure(customer_code: string, measure_type?: any) {
     const list = await this.billRepository.findBy({
-      customer_code
+      customer_code,
+      measure_type
     });
 
     return list
