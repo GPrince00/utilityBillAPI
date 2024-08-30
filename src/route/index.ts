@@ -62,3 +62,13 @@ router.patch(
     res.status(measure.status).send(measure.message).end();
   }
 );
+
+
+router.get(
+  '/:id/list',
+  async (req: Request, res: Response) => {
+    console.log(req.params.id);
+    console.log(req.query);
+    res.status(205).end();
+  }
+)
