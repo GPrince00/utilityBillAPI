@@ -36,19 +36,25 @@ export class BillController {
 
     if (!measure) {
       return {
-        error_code: "MEASURE_NOT_FOUND",
-        error_description: "Leitura do mês já realizada",
+        status: 404,
+        message: {
+          error_code: "MEASURE_NOT_FOUND",
+          error_description: "Leitura do mês já realizada",
+        },
       };
     } else if (measure.has_confirmed) {
       return {
-        error_code: "CONFIRMATION_DUPLICATE",
-        error_description: "Leitura do mês já realizada",
+        status: 409,
+        message: {
+          error_code: "CONFIRMATION_DUPLICATE",
+          error_description: "Leitura do mês já realizada",
+        },
       };
     } else {
       measure.has_confirmed = true;
       await this.billRepository.save(measure);
 
-      return { sucess: true };
+      return { status: 200, message: { sucess: true } };
     }
   }
 }

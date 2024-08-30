@@ -57,7 +57,8 @@ router.patch(
     const { measure_uuid } = req.body;
 
     const measure = await billCtrl.confirmMeasure(measure_uuid);
+    console.log(measure.status);
 
-    res.send(measure).end();
+    res.status(measure.status).send(measure.message).end();
   }
 );
