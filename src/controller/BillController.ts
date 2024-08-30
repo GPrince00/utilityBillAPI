@@ -57,4 +57,12 @@ export class BillController {
       return { status: 200, message: { sucess: true } };
     }
   }
+
+  async getMeasure(customer_code: string, measure_type?: string) {
+    const list = await this.billRepository.findBy({
+      customer_code
+    });
+
+    return list
+  }
 }
