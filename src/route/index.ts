@@ -45,7 +45,7 @@ router.patch(
   "/confirm",
   body("measure_uuid").notEmpty().isUUID(),
   body("confirmed_value").notEmpty().isInt(),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -54,6 +54,10 @@ router.patch(
       });
     }
 
-    res.send({ success: true }).end();
+    const { measure_uuid } = req.body;
+
+    const measure = await billCtrl.confirmMeasure(measure_uuid);
+
+    res.send(measure).end();
   }
 );
