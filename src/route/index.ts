@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { body, query, validationResult } from "express-validator";
+import { body, check, query, validationResult } from "express-validator";
 import { BillController } from "../controller/BillController";
 import { Bill } from "../entity/Bill";
 
@@ -63,29 +63,29 @@ router.patch(
   }
 );
 
-router.get(
-  "/:customer_code/list",
-  query("measure_type").optional().isIn(["WATER", "GAS"]),
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+router.get("/:customer_code/list", async (req: Request, res: Response) => {
+  let type = req.query.measure_type;
+
+  if (typeof type === "string") {
+    type = type.toUpperCase();
+    if (type.includes("WATER" || "GAS")) {
       return res.status(400).json({
         error_code: "INVALID_TYPE",
         error_description: "Tipo de medição não permitida",
       });
     }
-    const { customer_code } = req.params;
-    const { measure_type } = req.query;
-
-    const list = await billCtrl.getMeasure(customer_code, measure_type);
-
-    if (list.length === 0) {
-      return res.status(404).json({
-        error_code: "MEASURES_NOT_FOUND",
-        error_description: "Nenhuma leitura encontrada",
-      });
-    }
-
-    res.send({ customer_code: customer_code, measures: list }).end();
   }
-);
+
+  const { customer_code } = req.params;
+
+  const list = await billCtrl.getMeasure(customer_code, type);
+
+  if (list.length === 0) {
+    return res.status(404).json({
+      error_code: "MEASURES_NOT_FOUND",
+      error_description: "Nenhuma leitura encontrada",
+    });
+  }
+
+  res.send({ customer_code: customer_code, measures: list }).end();
+});
