@@ -1,7 +1,17 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-require('dotenv').config();
+import { AppDataSource } from "../data-source";
+import { Bill } from "../entity/Bill";
+require("dotenv").config();
 export class BillController {
-  async save(image: string) {
+  private billRepository = AppDataSource.getRepository(Bill);
+
+  async save(bill: Bill) {
+    const billSaved = await this.billRepository.save(bill);
+
+    return billSaved;
+  }
+
+  async measure(image: string) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -14,7 +24,7 @@ export class BillController {
         },
       },
     ]);
-    console.log(result.response.text());
-    return;
+
+    return result.response.text();
   }
 }
