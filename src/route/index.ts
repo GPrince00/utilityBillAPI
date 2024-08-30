@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { body, validationResult } from "express-validator";
+import { body, query, validationResult } from "express-validator";
 import { BillController } from "../controller/BillController";
 import { Bill } from "../entity/Bill";
 
@@ -66,9 +66,15 @@ router.patch(
 
 router.get(
   '/:id/list',
+  query("measure_type").optional().isIn(["WATER", "GAS"]),
   async (req: Request, res: Response) => {
-    console.log(req.params.id);
-    console.log(req.query);
-    res.status(205).end();
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error_code: "INVALID_TYPÈ",
+        error_description: "Tipo de medição não permitida",
+      });
+    }
+    res.status(200).end();
   }
 )
