@@ -40,3 +40,20 @@ router.post(
     });
   }
 );
+
+router.patch(
+  "/confirm",
+  body("measure_uuid").notEmpty().isUUID(),
+  body("confirmed_value").notEmpty().isInt(),
+  (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        error_code: "INVALID_DATA",
+        error_description: errors.mapped(),
+      });
+    }
+
+    res.send({ success: true }).end();
+  }
+);
